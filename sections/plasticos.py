@@ -4,7 +4,6 @@ from data.plasticos_data import get_plasticos
 def formulario_plasticos(partida_idx):
     st.subheader("🟢 Sección: Plásticos de Ingeniería")
 
-    # Asegurar que existan partidas
     if "partidas" not in st.session_state:
         st.session_state["partidas"] = []
 
@@ -20,6 +19,14 @@ def formulario_plasticos(partida_idx):
 
     plasticos = get_plasticos()
     total_global = 0
+
+    # 🔹 función auxiliar para decimales
+    def decimal_input(label, key):
+        val = st.text_input(label, key=key)
+        try:
+            return float(val) if val else 0.0
+        except ValueError:
+            return 0.0
 
     for idx, item in enumerate(partida["plasticos"]):
         with st.expander(f"🧱 Plástico {idx+1}", expanded=(idx == len(partida["plasticos"]) - 1)):
@@ -41,21 +48,9 @@ def formulario_plasticos(partida_idx):
 
             # 📐 Datos de la placa base
             st.markdown("### 📐 Datos de la placa base")
-            medida1_placa = st.number_input(
-                "Medida de la placa (lado 1 en pulgadas)",
-                key=f"plasticos_medida1_placa_{partida_idx}_{idx}",
-                min_value=0.0, step=0.01, format="%.6f"
-            )
-            medida2_placa = st.number_input(
-                "Medida de la placa (lado 2 en pulgadas)",
-                key=f"plasticos_medida2_placa_{partida_idx}_{idx}",
-                min_value=0.0, step=0.01, format="%.6f"
-            )
-            costo_total_placa = st.number_input(
-                "Costo total de la placa ($)",
-                key=f"plasticos_costo_total_placa_{partida_idx}_{idx}",
-                min_value=0.0, step=0.01, format="%.6f"
-            )
+            medida1_placa = decimal_input("Medida de la placa (lado 1 en pulgadas)", f"plasticos_medida1_placa_{partida_idx}_{idx}")
+            medida2_placa = decimal_input("Medida de la placa (lado 2 en pulgadas)", f"plasticos_medida2_placa_{partida_idx}_{idx}")
+            costo_total_placa = decimal_input("Costo total de la placa ($)", f"plasticos_costo_total_placa_{partida_idx}_{idx}")
 
             if medida1_placa and medida2_placa:
                 area_total_pulg2 = medida1_placa * medida2_placa
@@ -69,16 +64,8 @@ def formulario_plasticos(partida_idx):
 
             # 📏 Dimensiones de la pieza
             st.markdown("### 📏 Dimensiones de la pieza")
-            medida1_pieza = st.number_input(
-                "Medida pieza 1 (pulgadas)",
-                key=f"plasticos_medida1_pieza_{partida_idx}_{idx}",
-                min_value=0.0, step=0.01, format="%.6f"
-            )
-            medida2_pieza = st.number_input(
-                "Medida pieza 2 (pulgadas)",
-                key=f"plasticos_medida2_pieza_{partida_idx}_{idx}",
-                min_value=0.0, step=0.01, format="%.6f"
-            )
+            medida1_pieza = decimal_input("Medida pieza 1 (pulgadas)", f"plasticos_medida1_pieza_{partida_idx}_{idx}")
+            medida2_pieza = decimal_input("Medida pieza 2 (pulgadas)", f"plasticos_medida2_pieza_{partida_idx}_{idx}")
 
             if medida1_pieza and medida2_pieza:
                 area_pieza_pulg2 = medida1_pieza * medida2_pieza
@@ -97,43 +84,20 @@ def formulario_plasticos(partida_idx):
 
             # 🛠️ Maquinado convencional
             st.markdown("### 🛠️ Maquinado convencional")
-            costo_hora_conve = st.number_input(
-                "Costo por hora convencional ($)",
-                key=f"plasticos_costo_hora_conve_{partida_idx}_{idx}",
-                min_value=0.0, step=0.01, format="%.6f"
-            )
-            horas_conve = st.number_input(
-                "Horas convencionales por pieza",
-                key=f"plasticos_horas_conve_{partida_idx}_{idx}",
-                min_value=0.0, step=0.01, format="%.6f"
-            )
+            costo_hora_conve = decimal_input("Costo por hora convencional ($)", f"plasticos_costo_hora_conve_{partida_idx}_{idx}")
+            horas_conve = decimal_input("Horas convencionales por pieza", f"plasticos_horas_conve_{partida_idx}_{idx}")
             total_conve = costo_hora_conve * horas_conve
 
             # 🤖 Maquinado CNC
             st.markdown("### 🤖 Maquinado CNC")
-            costo_hora_cnc = st.number_input(
-                "Costo por hora CNC ($)",
-                key=f"plasticos_costo_hora_cnc_{partida_idx}_{idx}",
-                min_value=0.0, step=0.01, format="%.6f"
-            )
-            horas_cnc = st.number_input(
-                "Horas CNC por pieza",
-                key=f"plasticos_horas_cnc_{partida_idx}_{idx}",
-                min_value=0.0, step=0.01, format="%.6f"
-            )
+            costo_hora_cnc = decimal_input("Costo por hora CNC ($)", f"plasticos_costo_hora_cnc_{partida_idx}_{idx}")
+            horas_cnc = decimal_input("Horas CNC por pieza", f"plasticos_horas_cnc_{partida_idx}_{idx}")
             total_cnc = costo_hora_cnc * horas_cnc
 
             # 🧪 Tratamiento
             st.markdown("### 🧪 Tratamiento")
-            tratamiento_texto = st.text_input(
-                "Detalle del tratamiento",
-                key=f"plasticos_tratamiento_{partida_idx}_{idx}"
-            )
-            costo_tratamiento = st.number_input(
-                "Costo del tratamiento por pieza ($)",
-                key=f"plasticos_costo_tratamiento_{partida_idx}_{idx}",
-                min_value=0.0, step=0.01, format="%.6f"
-            )
+            tratamiento_texto = st.text_input("Detalle del tratamiento", key=f"plasticos_tratamiento_{partida_idx}_{idx}")
+            costo_tratamiento = decimal_input("Costo del tratamiento por pieza ($)", f"plasticos_costo_tratamiento_{partida_idx}_{idx}")
 
             # 💰 Totales
             st.markdown("### 💰 Totales")
@@ -172,7 +136,6 @@ def formulario_plasticos(partida_idx):
                 partida["plasticos"].pop(idx)
                 st.rerun()
 
-    # Botón agregar al final
     if st.button("➕ Agregar otro plástico", key=f"plasticos_agregar_{partida_idx}"):
         partida["plasticos"].append({})
         st.rerun()
