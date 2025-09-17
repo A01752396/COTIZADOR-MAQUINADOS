@@ -41,15 +41,16 @@ with col_title:
 st.markdown(
     """
     <style>
-    [data-testid="column"]:nth-of-type(2) {
+    /* Forzar que la última columna (resumen) sea sticky */
+    [data-testid="stVerticalBlock"] > div:last-child {
         position: -webkit-sticky !important;
         position: sticky !important;
         top: 1rem;
         align-self: flex-start;
-    }
-    .delete-btn {
-        color: #e30613;
-        font-weight: bold;
+        z-index: 99;
+        background-color: white;
+        border-radius: 8px;
+        padding-bottom: 1rem;
     }
     </style>
     """,
