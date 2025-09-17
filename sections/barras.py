@@ -40,43 +40,68 @@ def formulario_barras(partida_idx):
             )
 
             longitud_pieza = st.number_input(
-                "Longitud de cada pieza (m)", key=f"barras_longitud_{partida_idx}_{idx}"
+                "Longitud de cada pieza (m)",
+                key=f"barras_longitud_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
             )
 
             costo_por_kg = st.number_input(
-                "Costo por kilogramo ($)", key=f"barras_costo_kg_{partida_idx}_{idx}"
+                "Costo por kilogramo ($)",
+                key=f"barras_costo_kg_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
             )
-
-            if longitud_pieza and costo_por_kg:
-                peso_unitario = longitud_pieza * peso_metro
-                costo_material_unitario = peso_unitario * costo_por_kg
-                costo_material_total = costo_material_unitario * num_piezas
-                st.success(f"Costo del material por pieza: ${costo_material_unitario:.2f}")
-                st.success(f"Costo total del material ({num_piezas} piezas): ${costo_material_total:.2f}")
-            else:
-                costo_material_unitario = 0
-                costo_material_total = 0
 
             # Maquinado convencional
             st.markdown("### 🛠️ Maquinado convencional")
-            costo_hora_conve = st.number_input("Costo por hora convencional ($)", key=f"barras_costo_hora_conve_{partida_idx}_{idx}")
-            horas_conve = st.number_input("Horas convencionales por pieza", key=f"barras_horas_conve_{partida_idx}_{idx}")
-            total_conve = costo_hora_conve * horas_conve
-            if total_conve:
-                st.success(f"Total convencional por pieza: ${total_conve:.2f}")
+            costo_hora_conve = st.number_input(
+                "Costo por hora convencional ($)",
+                key=f"barras_costo_hora_conve_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
+            )
+            horas_conve = st.number_input(
+                "Horas convencionales por pieza",
+                key=f"barras_horas_conve_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
+            )
 
             # Maquinado CNC
             st.markdown("### 🤖 Maquinado CNC")
-            costo_hora_cnc = st.number_input("Costo por hora CNC ($)", key=f"barras_costo_hora_cnc_{partida_idx}_{idx}")
-            horas_cnc = st.number_input("Horas CNC por pieza", key=f"barras_horas_cnc_{partida_idx}_{idx}")
-            total_cnc = costo_hora_cnc * horas_cnc
-            if total_cnc:
-                st.success(f"Total CNC por pieza: ${total_cnc:.2f}")
+            costo_hora_cnc = st.number_input(
+                "Costo por hora CNC ($)",
+                key=f"barras_costo_hora_cnc_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
+            )
+            horas_cnc = st.number_input(
+                "Horas CNC por pieza",
+                key=f"barras_horas_cnc_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
+            )
 
             # Tratamiento
             st.markdown("### 🧪 Tratamiento")
-            tratamiento_texto = st.text_input("Detalle del tratamiento", key=f"barras_tratamiento_{partida_idx}_{idx}")
-            costo_tratamiento = st.number_input("Costo del tratamiento por pieza ($)", key=f"barras_costo_tratamiento_{partida_idx}_{idx}")
+            tratamiento_texto = st.text_input(
+                "Detalle del tratamiento",
+                key=f"barras_tratamiento_{partida_idx}_{idx}"
+            )
+            costo_tratamiento = st.number_input(
+                "Costo del tratamiento por pieza ($)",
+                key=f"barras_costo_tratamiento_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
+            )
 
             # Totales
             st.markdown("### 💰 Totales")

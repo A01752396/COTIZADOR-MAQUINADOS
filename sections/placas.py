@@ -35,60 +35,86 @@ def formulario_placas(partida_idx):
             st.write(f"**Descripción:** {descripcion}")
             st.write(f"**Peso teórico por m²:** {peso:.2f} kg/m²")
 
-            # Número de piezas
+            # Número de piezas (entero, se queda igual)
             num_piezas = st.number_input(
                 "Número de piezas", min_value=1, step=1,
                 key=f"placas_num_piezas_{partida_idx}_{idx}"
             )
 
-            # Medidas
-            medida1_m = st.number_input("Medida placa 1 (m)", format="%.4f", key=f"placas_medida1_m_{partida_idx}_{idx}")
-            medida2_m = st.number_input("Medida placa 2 (m)", format="%.4f", key=f"placas_medida2_m_{partida_idx}_{idx}")
+            # Medidas (decimales)
+            medida1_m = st.number_input(
+                "Medida placa 1 (m)",
+                key=f"placas_medida1_m_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
+            )
+            medida2_m = st.number_input(
+                "Medida placa 2 (m)",
+                key=f"placas_medida2_m_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
+            )
 
-            # ============================
             # 💰 Costo del material
-            # ============================
             st.markdown("### 💰 Costo del material (por peso)")
-            costo_por_kg = st.number_input("Costo por kg del material ($)", key=f"placas_costo_kg_{partida_idx}_{idx}")
-            area_m2 = medida1_m * medida2_m if (medida1_m and medida2_m) else 0
-            costo_material_total = area_m2 * peso * costo_por_kg if (area_m2 and costo_por_kg) else 0
+            costo_por_kg = st.number_input(
+                "Costo por kg del material ($)",
+                key=f"placas_costo_kg_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
+            )
 
-            # Conversión a pulg²
-            st.markdown("### 💵 Costo del material (por pulg²)")
-            area_pulg2 = area_m2 * 1550.0031 if area_m2 else 0
-            costo_por_pulg2 = (costo_material_total / area_pulg2) if (costo_material_total and area_pulg2) else 0
-            if area_pulg2:
-                st.info(f"Área total de la placa: {area_pulg2:.2f} pulg²")
-            if costo_por_pulg2:
-                st.info(f"Costo por pulg²: ${costo_por_pulg2:.2f}")
-
-            # ============================
             # 🛠️ Maquinado convencional
-            # ============================
             st.markdown("### 🛠️ Maquinado convencional")
-            costo_hora_conve = st.number_input("Costo por hora convencional ($)", key=f"placas_costo_hora_conve_{partida_idx}_{idx}")
-            horas_conve = st.number_input("Horas convencionales por pieza", key=f"placas_horas_conve_{partida_idx}_{idx}")
-            total_conve = costo_hora_conve * horas_conve
-            if total_conve:
-                st.success(f"Total convencional por pieza: ${total_conve:.2f}")
+            costo_hora_conve = st.number_input(
+                "Costo por hora convencional ($)",
+                key=f"placas_costo_hora_conve_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
+            )
+            horas_conve = st.number_input(
+                "Horas convencionales por pieza",
+                key=f"placas_horas_conve_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
+            )
 
-            # ============================
             # 🤖 Maquinado CNC
-            # ============================
             st.markdown("### 🤖 Maquinado CNC")
-            costo_hora_cnc = st.number_input("Costo por hora CNC ($)", key=f"placas_costo_hora_cnc_{partida_idx}_{idx}")
-            horas_cnc = st.number_input("Horas CNC por pieza", key=f"placas_horas_cnc_{partida_idx}_{idx}")
-            total_cnc = costo_hora_cnc * horas_cnc
-            if total_cnc:
-                st.success(f"Total CNC por pieza: ${total_cnc:.2f}")
+            costo_hora_cnc = st.number_input(
+                "Costo por hora CNC ($)",
+                key=f"placas_costo_hora_cnc_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
+            )
+            horas_cnc = st.number_input(
+                "Horas CNC por pieza",
+                key=f"placas_horas_cnc_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
+            )
 
-            # ============================
             # 🧪 Tratamiento
-            # ============================
             st.markdown("### 🧪 Tratamiento")
-            tratamiento_texto = st.text_input("Detalle del tratamiento", key=f"placas_tratamiento_{partida_idx}_{idx}")
-            costo_tratamiento = st.number_input("Costo del tratamiento por pieza ($)", key=f"placas_costo_tratamiento_{partida_idx}_{idx}")
-
+            tratamiento_texto = st.text_input(
+                "Detalle del tratamiento",
+                key=f"placas_tratamiento_{partida_idx}_{idx}"
+            )
+            costo_tratamiento = st.number_input(
+                "Costo del tratamiento por pieza ($)",
+                key=f"placas_costo_tratamiento_{partida_idx}_{idx}",
+                min_value=0.0,
+                step=0.01,
+                format="%.6f"
+            )
+            
             # ============================
             # 💰 Totales
             # ============================
