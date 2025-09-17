@@ -41,16 +41,19 @@ with col_title:
 st.markdown(
     """
     <style>
-    /* Forzar que la última columna (resumen) sea sticky */
-    [data-testid="stVerticalBlock"] > div:last-child {
+    /* Hacer que la columna de resumen se quede fija */
+    [data-testid="column"]:nth-of-type(2) {
         position: -webkit-sticky !important;
         position: sticky !important;
         top: 1rem;
         align-self: flex-start;
-        z-index: 99;
+        z-index: 100;
+    }
+    .resumen-box {
         background-color: white;
-        border-radius: 8px;
-        padding-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     </style>
     """,
@@ -136,6 +139,7 @@ with col1:
         st.rerun()
 
 with col2:
+    st.markdown(f"<div class='resumen-box'>", unsafe_allow_html=True)
     st.markdown(f"### 📊 Resumen de {partida['nombre']}")
 
     if partida["items"]:
@@ -158,6 +162,8 @@ with col2:
 
     else:
         st.info("Aún no has agregado ítems en esta partida.")
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # ============================
 # 📊 Resumen global
