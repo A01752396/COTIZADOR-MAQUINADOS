@@ -41,15 +41,13 @@ with col_title:
 st.markdown(
     """
     <style>
-    /* Hacer que la columna de resumen se quede fija */
-    [data-testid="column"]:nth-of-type(2) {
+    /* Caja sticky para el resumen */
+    .resumen-box {
         position: -webkit-sticky !important;
         position: sticky !important;
         top: 1rem;
         align-self: flex-start;
         z-index: 100;
-    }
-    .resumen-box {
         background-color: white;
         padding: 1rem;
         border-radius: 10px;
@@ -139,6 +137,7 @@ with col1:
         st.rerun()
 
 with col2:
+    # 🚨 Aquí envolvemos TODO el bloque en resumen-box
     st.markdown(f"<div class='resumen-box'>", unsafe_allow_html=True)
     st.markdown(f"### 📊 Resumen de {partida['nombre']}")
 
