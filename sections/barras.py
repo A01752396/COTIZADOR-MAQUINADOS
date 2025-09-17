@@ -34,62 +34,69 @@ def formulario_barras(partida_idx):
             st.write(f"**Descripción:** {descripcion}")
             st.write(f"**Peso por metro:** {peso_metro} kg/m")
 
+            # Número de piezas (solo enteros)
             num_piezas = st.number_input(
                 "Número de piezas", min_value=1, step=1,
                 key=f"barras_num_piezas_{partida_idx}_{idx}"
             )
 
+            # Longitud decimal
             longitud_pieza = st.number_input(
                 "Longitud de cada pieza (m)",
                 key=f"barras_longitud_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
 
+            # Costo decimal
             costo_por_kg = st.number_input(
                 "Costo por kilogramo ($)",
                 key=f"barras_costo_kg_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
 
-            # Maquinado convencional
+            if longitud_pieza and costo_por_kg:
+                peso_unitario = longitud_pieza * peso_metro
+                costo_material_unitario = peso_unitario * costo_por_kg
+                costo_material_total = costo_material_unitario * num_piezas
+                st.success(f"Costo del material por pieza: ${costo_material_unitario:.2f}")
+                st.success(f"Costo total del material ({num_piezas} piezas): ${costo_material_total:.2f}")
+            else:
+                costo_material_unitario = 0
+                costo_material_total = 0
+
+            # 🛠️ Maquinado convencional
             st.markdown("### 🛠️ Maquinado convencional")
             costo_hora_conve = st.number_input(
                 "Costo por hora convencional ($)",
                 key=f"barras_costo_hora_conve_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
             horas_conve = st.number_input(
                 "Horas convencionales por pieza",
                 key=f"barras_horas_conve_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
+            total_conve = costo_hora_conve * horas_conve
+            if total_conve:
+                st.success(f"Total convencional por pieza: ${total_conve:.2f}")
 
-            # Maquinado CNC
+            # 🤖 Maquinado CNC
             st.markdown("### 🤖 Maquinado CNC")
             costo_hora_cnc = st.number_input(
                 "Costo por hora CNC ($)",
                 key=f"barras_costo_hora_cnc_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
             horas_cnc = st.number_input(
                 "Horas CNC por pieza",
                 key=f"barras_horas_cnc_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
+            total_cnc = costo_hora_cnc * horas_cnc
+            if total_cnc:
+                st.success(f"Total CNC por pieza: ${total_cnc:.2f}")
 
-            # Tratamiento
+            # 🧪 Tratamiento
             st.markdown("### 🧪 Tratamiento")
             tratamiento_texto = st.text_input(
                 "Detalle del tratamiento",
@@ -98,12 +105,10 @@ def formulario_barras(partida_idx):
             costo_tratamiento = st.number_input(
                 "Costo del tratamiento por pieza ($)",
                 key=f"barras_costo_tratamiento_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
 
-            # Totales
+            # 💰 Totales
             st.markdown("### 💰 Totales")
             costo_unitario = costo_material_unitario + total_conve + total_cnc + costo_tratamiento
             costo_total = costo_unitario * num_piezas
@@ -113,11 +118,9 @@ def formulario_barras(partida_idx):
 
             total_global += costo_total
 
-            # ==========================
-            # Guardar o actualizar item
-            # ==========================
+            # Guardar/actualizar item
             if st.button(f"💾 Guardar Barra {idx+1}", key=f"barras_guardar_{partida_idx}_{idx}"):
-                item_id = f"Barras-{partida_idx}-{idx}"  # ID único
+                item_id = f"Barras-{partida_idx}-{idx}"
                 nuevo_item = {
                     "id": item_id,
                     "Sección": "Barras",
@@ -127,7 +130,6 @@ def formulario_barras(partida_idx):
                     "Costo total": round(costo_total, 2),
                     "Tratamiento": tratamiento_texto
                 }
-
                 ids_existentes = [i["id"] for i in partida["items"]]
                 if item_id in ids_existentes:
                     idx_existente = ids_existentes.index(item_id)
@@ -137,12 +139,12 @@ def formulario_barras(partida_idx):
                     partida["items"].append(nuevo_item)
                     st.success(f"✅ Barra {idx+1} agregada a {partida['nombre']}")
 
-            # Botón eliminar
+            # Eliminar barra
             if st.button(f"❌ Eliminar Barra {idx+1}", key=f"barras_eliminar_{partida_idx}_{idx}"):
                 partida["barras"].pop(idx)
                 st.rerun()
 
-    # Botón agregar al final
+    # Agregar barra
     if st.button("➕ Agregar barra", key=f"barras_agregar_{partida_idx}"):
         partida["barras"].append({})
         st.rerun()

@@ -8,7 +8,6 @@ def formulario_plasticos(partida_idx):
     if "partidas" not in st.session_state:
         st.session_state["partidas"] = []
 
-    # Si la partida aún no existe, inicializarla
     if len(st.session_state["partidas"]) <= partida_idx:
         st.session_state["partidas"].append({
             "nombre": f"Partida {partida_idx+1}",
@@ -34,7 +33,7 @@ def formulario_plasticos(partida_idx):
             st.write(f"**Descripción:** {descripcion}")
             st.write(f"**Peso por m² (teórico):** {peso_m2:.2f} kg/m²")
 
-                        # Número de piezas (entero, se queda igual)
+            # Número de piezas (entero)
             num_piezas = st.number_input(
                 "Número de piezas", min_value=1, step=1,
                 key=f"plasticos_num_piezas_{partida_idx}_{idx}"
@@ -58,6 +57,16 @@ def formulario_plasticos(partida_idx):
                 min_value=0.0, step=0.01, format="%.6f"
             )
 
+            if medida1_placa and medida2_placa:
+                area_total_pulg2 = medida1_placa * medida2_placa
+                st.info(f"Área total de la placa: {area_total_pulg2:.2f} pulg²")
+
+                costo_por_pulg2 = (costo_total_placa / area_total_pulg2) if costo_total_placa else 0
+                if costo_por_pulg2:
+                    st.info(f"Costo por pulg²: ${costo_por_pulg2:.2f}")
+            else:
+                costo_por_pulg2 = 0
+
             # 📏 Dimensiones de la pieza
             st.markdown("### 📏 Dimensiones de la pieza")
             medida1_pieza = st.number_input(
@@ -71,6 +80,21 @@ def formulario_plasticos(partida_idx):
                 min_value=0.0, step=0.01, format="%.6f"
             )
 
+            if medida1_pieza and medida2_pieza:
+                area_pieza_pulg2 = medida1_pieza * medida2_pieza
+                st.info(f"Área de la pieza: {area_pieza_pulg2:.2f} pulg²")
+            else:
+                area_pieza_pulg2 = 0
+
+            if area_pieza_pulg2 and costo_por_pulg2:
+                costo_material_unitario = area_pieza_pulg2 * costo_por_pulg2
+                costo_material_total = costo_material_unitario * num_piezas
+                st.success(f"Costo del material por pieza: ${costo_material_unitario:.2f}")
+                st.success(f"Costo total del material ({num_piezas} piezas): ${costo_material_total:.2f}")
+            else:
+                costo_material_unitario = 0
+                costo_material_total = 0
+
             # 🛠️ Maquinado convencional
             st.markdown("### 🛠️ Maquinado convencional")
             costo_hora_conve = st.number_input(
@@ -83,6 +107,7 @@ def formulario_plasticos(partida_idx):
                 key=f"plasticos_horas_conve_{partida_idx}_{idx}",
                 min_value=0.0, step=0.01, format="%.6f"
             )
+            total_conve = costo_hora_conve * horas_conve
 
             # 🤖 Maquinado CNC
             st.markdown("### 🤖 Maquinado CNC")
@@ -96,6 +121,7 @@ def formulario_plasticos(partida_idx):
                 key=f"plasticos_horas_cnc_{partida_idx}_{idx}",
                 min_value=0.0, step=0.01, format="%.6f"
             )
+            total_cnc = costo_hora_cnc * horas_cnc
 
             # 🧪 Tratamiento
             st.markdown("### 🧪 Tratamiento")
@@ -109,8 +135,7 @@ def formulario_plasticos(partida_idx):
                 min_value=0.0, step=0.01, format="%.6f"
             )
 
-
-            # Totales
+            # 💰 Totales
             st.markdown("### 💰 Totales")
             costo_unitario = costo_material_unitario + total_conve + total_cnc + costo_tratamiento
             costo_total = costo_unitario * num_piezas
@@ -120,11 +145,9 @@ def formulario_plasticos(partida_idx):
 
             total_global += costo_total
 
-            # ==========================
             # Guardar o actualizar item
-            # ==========================
             if st.button(f"💾 Guardar Plástico {idx+1}", key=f"plasticos_guardar_{partida_idx}_{idx}"):
-                item_id = f"Plasticos-{partida_idx}-{idx}"  # ID único
+                item_id = f"Plasticos-{partida_idx}-{idx}"
                 nuevo_item = {
                     "id": item_id,
                     "Sección": "Plásticos",

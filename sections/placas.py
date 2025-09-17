@@ -35,7 +35,7 @@ def formulario_placas(partida_idx):
             st.write(f"**Descripción:** {descripcion}")
             st.write(f"**Peso teórico por m²:** {peso:.2f} kg/m²")
 
-            # Número de piezas (entero, se queda igual)
+            # Número de piezas (entero)
             num_piezas = st.number_input(
                 "Número de piezas", min_value=1, step=1,
                 key=f"placas_num_piezas_{partida_idx}_{idx}"
@@ -45,16 +45,12 @@ def formulario_placas(partida_idx):
             medida1_m = st.number_input(
                 "Medida placa 1 (m)",
                 key=f"placas_medida1_m_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
             medida2_m = st.number_input(
                 "Medida placa 2 (m)",
                 key=f"placas_medida2_m_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
 
             # 💰 Costo del material
@@ -62,9 +58,7 @@ def formulario_placas(partida_idx):
             costo_por_kg = st.number_input(
                 "Costo por kg del material ($)",
                 key=f"placas_costo_kg_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
 
             # 🛠️ Maquinado convencional
@@ -72,34 +66,28 @@ def formulario_placas(partida_idx):
             costo_hora_conve = st.number_input(
                 "Costo por hora convencional ($)",
                 key=f"placas_costo_hora_conve_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
             horas_conve = st.number_input(
                 "Horas convencionales por pieza",
                 key=f"placas_horas_conve_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
+            total_conve = costo_hora_conve * horas_conve
 
             # 🤖 Maquinado CNC
             st.markdown("### 🤖 Maquinado CNC")
             costo_hora_cnc = st.number_input(
                 "Costo por hora CNC ($)",
                 key=f"placas_costo_hora_cnc_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
             horas_cnc = st.number_input(
                 "Horas CNC por pieza",
                 key=f"placas_horas_cnc_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
+            total_cnc = costo_hora_cnc * horas_cnc
 
             # 🧪 Tratamiento
             st.markdown("### 🧪 Tratamiento")
@@ -110,15 +98,15 @@ def formulario_placas(partida_idx):
             costo_tratamiento = st.number_input(
                 "Costo del tratamiento por pieza ($)",
                 key=f"placas_costo_tratamiento_{partida_idx}_{idx}",
-                min_value=0.0,
-                step=0.01,
-                format="%.6f"
+                min_value=0.0, step=0.01, format="%.6f"
             )
-            
+
             # ============================
             # 💰 Totales
             # ============================
             st.markdown("### 💰 Totales")
+            # ⚠️ aseguramos que costo_material_total no rompa
+            costo_material_total = (medida1_m * medida2_m * peso * costo_por_kg) if (medida1_m and medida2_m and costo_por_kg) else 0
             costo_material_unitario = (costo_material_total / num_piezas) if (num_piezas and costo_material_total) else 0
             costo_unitario = costo_material_unitario + total_conve + total_cnc + costo_tratamiento
             costo_total = costo_unitario * num_piezas
@@ -138,21 +126,18 @@ def formulario_placas(partida_idx):
                     "Piezas": num_piezas,
                     "Costo unitario": round(costo_unitario, 2),
                     "Costo total": round(costo_total, 2),
-                    "Tratamiento": tratamiento_texto  # 👈 si usas tratamiento
+                    "Tratamiento": tratamiento_texto
                 }
 
                 # Buscar si ya existe ese id en la partida
                 ids_existentes = [i["id"] for i in partida["items"]]
                 if item_id in ids_existentes:
-                    # Actualizar existente
                     idx_existente = ids_existentes.index(item_id)
                     partida["items"][idx_existente] = nuevo_item
                     st.success(f"🔄 Placa {idx+1} actualizada en {partida['nombre']}")
                 else:
-                    # Agregar si no existía
                     partida["items"].append(nuevo_item)
                     st.success(f"✅ Placa {idx+1} agregada a {partida['nombre']}")
-
 
             # Botón eliminar
             if st.button(f"❌ Eliminar Placa {idx+1}", key=f"placas_eliminar_{partida_idx}_{idx}"):
