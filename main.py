@@ -41,18 +41,38 @@ with col_title:
 st.markdown(
     """
     <style>
-    /* Hacer que la segunda columna (resumen) sea sticky */
-    [data-testid="stHorizontalBlock"] [data-testid="column"]:nth-of-type(2) {
+    /* Forzar sticky de la columna derecha */
+    .sticky-col {
         position: -webkit-sticky !important;
         position: sticky !important;
-        top: 1rem;
-        align-self: flex-start;
-        z-index: 100;
+        top: 10px;  /* margen desde arriba */
+        z-index: 99;
+        background: white;
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     </style>
     """,
     unsafe_allow_html=True,
 )
+
+# ============================
+# 📐 Layout en dos columnas
+# ============================
+col1, col2 = st.columns([2, 1])
+
+with col1:
+    st.markdown("### 📝 Paso 1")
+    for i in range(20):  # simular contenido largo
+        st.text(f"Contenido fila {i+1}")
+
+with col2:
+    st.markdown("<div class='sticky-col'>", unsafe_allow_html=True)
+    st.markdown("### 📊 Resumen de la partida")
+    st.success("💵 Total: $123.45")
+    st.table(pd.DataFrame({"Item": ["A", "B"], "Costo": [100, 23]}))
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # ============================
 # 🗂️ Manejo de partidas
