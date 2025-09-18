@@ -41,38 +41,26 @@ with col_title:
 st.markdown(
     """
     <style>
-    /* Forzar sticky de la columna derecha */
-    .sticky-col {
+    /* Forzar sticky en la SEGUNDA columna de st.columns */
+    [data-testid="stHorizontalBlock"] > div:nth-of-type(2) {
         position: -webkit-sticky !important;
         position: sticky !important;
-        top: 10px;  /* margen desde arriba */
+        top: 1rem;  /* distancia desde el top */
+        align-self: flex-start;
         z-index: 99;
-        background: white;
-        border-radius: 10px;
+    }
+
+    /* Estilo de la caja de resumen */
+    .resumen-box {
+        background-color: white;
         padding: 1rem;
+        border-radius: 10px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     </style>
     """,
     unsafe_allow_html=True,
 )
-
-# ============================
-# 📐 Layout en dos columnas
-# ============================
-col1, col2 = st.columns([2, 1])
-
-with col1:
-    st.markdown("### 📝 Paso 1")
-    for i in range(20):  # simular contenido largo
-        st.text(f"Contenido fila {i+1}")
-
-with col2:
-    st.markdown("<div class='sticky-col'>", unsafe_allow_html=True)
-    st.markdown("### 📊 Resumen de la partida")
-    st.success("💵 Total: $123.45")
-    st.table(pd.DataFrame({"Item": ["A", "B"], "Costo": [100, 23]}))
-    st.markdown("</div>", unsafe_allow_html=True)
 
 # ============================
 # 🗂️ Manejo de partidas
@@ -103,7 +91,7 @@ partida = st.session_state["partidas"][partida_idx]
 # ============================
 # 🔘 Botones de acciones sobre la partida
 # ============================
-c1, c2, c3 = st.columns([1,1,1])
+c1, c2, c3 = st.columns([1, 1, 1])
 
 with c1:
     nuevo_nombre = st.text_input("✏️ Renombrar partida", value=partida["nombre"], key=f"rename_{partida_idx}")
@@ -152,6 +140,7 @@ with col1:
         st.rerun()
 
 with col2:
+    st.markdown("<div class='resumen-box'>", unsafe_allow_html=True)
     st.markdown(f"### 📊 Resumen de {partida['nombre']}")
 
     if partida["items"]:
@@ -174,6 +163,8 @@ with col2:
     else:
         st.info("Aún no has agregado ítems en esta partida.")
 
+    st.markdown("</div>", unsafe_allow_html=True)
+
 # ============================
 # 📊 Resumen global
 # ============================
@@ -191,3 +182,4 @@ st.table(df_global)
 
 total_global = sum(t["Total"] for t in totales)
 st.success(f"**💵 Total global de cotización: ${total_global:,.2f}**")
+
