@@ -41,17 +41,13 @@ with col_title:
 st.markdown(
     """
     <style>
-    /* Caja sticky para el resumen */
-    .resumen-box {
+    /* Hacer que la segunda columna (resumen) sea sticky */
+    [data-testid="stHorizontalBlock"] [data-testid="column"]:nth-of-type(2) {
         position: -webkit-sticky !important;
         position: sticky !important;
         top: 1rem;
         align-self: flex-start;
         z-index: 100;
-        background-color: white;
-        padding: 1rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     </style>
     """,
@@ -128,7 +124,6 @@ with col1:
     if st.checkbox("➕ Agregar plásticos de ingeniería", key=f"chk_plasticos_{partida_idx}"):
         formulario_plasticos(partida_idx)
 
-    # 👉 Reiniciar partida actual
     if st.button("🧹 Reiniciar partida actual"):
         partida["items"] = []
         partida["placas"] = []
@@ -137,8 +132,6 @@ with col1:
         st.rerun()
 
 with col2:
-    # 🚨 Aquí envolvemos TODO el bloque en resumen-box
-    st.markdown(f"<div class='resumen-box'>", unsafe_allow_html=True)
     st.markdown(f"### 📊 Resumen de {partida['nombre']}")
 
     if partida["items"]:
@@ -156,13 +149,10 @@ with col2:
             unsafe_allow_html=True,
         )
 
-        # Mostrar tabla con los ítems
         st.dataframe(df, use_container_width=True)
 
     else:
         st.info("Aún no has agregado ítems en esta partida.")
-
-    st.markdown("</div>", unsafe_allow_html=True)
 
 # ============================
 # 📊 Resumen global
